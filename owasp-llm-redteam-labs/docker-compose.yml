@@ -1,0 +1,71 @@
+# ============================================================================
+# docker-compose.yml — Levanta los 10 targets vulnerables (puertos 5001-5010)
+# Uso:  docker compose up --build -d          (todos)
+#       docker compose up --build -d llm03    (solo uno)
+# ============================================================================
+
+# Plantilla común reutilizada por los 10 servicios (anchor YAML).
+x-lab-common: &lab-common
+  build: .
+  restart: unless-stopped
+
+services:
+  llm01:
+    <<: *lab-common
+    container_name: rt-llm01-prompt-injection
+    command: python labs/llm01-prompt-injection/target/app.py
+    ports: ["5001:5000"]
+
+  llm02:
+    <<: *lab-common
+    container_name: rt-llm02-sensitive-info
+    command: python labs/llm02-sensitive-info/target/app.py
+    ports: ["5002:5000"]
+
+  llm03:
+    <<: *lab-common
+    container_name: rt-llm03-supply-chain
+    command: python labs/llm03-supply-chain/target/app.py
+    ports: ["5003:5000"]
+
+  llm04:
+    <<: *lab-common
+    container_name: rt-llm04-data-poisoning
+    command: python labs/llm04-data-poisoning/target/app.py
+    ports: ["5004:5000"]
+
+  llm05:
+    <<: *lab-common
+    container_name: rt-llm05-output-handling
+    command: python labs/llm05-output-handling/target/app.py
+    ports: ["5005:5000"]
+
+  llm06:
+    <<: *lab-common
+    container_name: rt-llm06-excessive-agency
+    command: python labs/llm06-excessive-agency/target/app.py
+    ports: ["5006:5000"]
+
+  llm07:
+    <<: *lab-common
+    container_name: rt-llm07-prompt-leakage
+    command: python labs/llm07-prompt-leakage/target/app.py
+    ports: ["5007:5000"]
+
+  llm08:
+    <<: *lab-common
+    container_name: rt-llm08-vector-weakness
+    command: python labs/llm08-vector-weakness/target/app.py
+    ports: ["5008:5000"]
+
+  llm09:
+    <<: *lab-common
+    container_name: rt-llm09-misinformation
+    command: python labs/llm09-misinformation/target/app.py
+    ports: ["5009:5000"]
+
+  llm10:
+    <<: *lab-common
+    container_name: rt-llm10-unbounded-consumption
+    command: python labs/llm10-unbounded-consumption/target/app.py
+    ports: ["5010:5000"]

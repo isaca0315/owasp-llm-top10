@@ -1,0 +1,5 @@
+# Secretos locales (API keys de Groq/Gemini)
+.env
+__pycache__/
+*.pyc
+.venv/

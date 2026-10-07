@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptMe CTF — OWASP LLM01 Lab</title>
+  <style>
+    /* ============================================================
+       Estilo "terminal hacker" / dark mode para el laboratorio CTF
+       ============================================================ */
+    :root {
+      --bg: #0a0e0a;
+      --panel: #0d120d;
+      --border: #1f3d1f;
+      --verde: #00ff41;
+      --verde-dim: #00b32d;
+      --amarillo: #ffd700;
+      --rojo: #ff4444;
+      --gris: #7a8a7a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--verde);
+      font-family: "Courier New", Consolas, monospace;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .contenedor { max-width: 900px; margin: 0 auto; }
+
+    /* --- Cabecera ------------------------------------------------ */
+    header {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 15px rgba(0, 255, 65, 0.15);
+    }
+    header h1 { font-size: 1.4rem; letter-spacing: 2px; }
+    header h1 .cursor { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    header p { color: var(--gris); font-size: 0.85rem; margin-top: 6px; }
+
+    /* --- Selector de nivel (rejilla adaptable para los 10 niveles) --- */
+    .niveles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .nivel-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--verde);
+      padding: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .nivel-btn:hover { border-color: var(--verde); }
+    .nivel-btn.activo {
+      border-color: var(--verde);
+      box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
+      background: #0f1a0f;
+    }
+    .nivel-btn .estado { float: right; color: var(--amarillo); }
+
+    /* --- Panel de chat -------------------------------------------- */
+    #chat {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      height: 380px;
+      overflow-y: auto;
+      padding: 14px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .msg { margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
+    .msg .tag { font-weight: bold; }
+    .msg.usuario .tag { color: var(--amarillo); }
+    .msg.bot .tag { color: var(--verde-dim); }
+    .msg.bloqueado { color: var(--rojo); }
+    .msg.sistema { color: var(--gris); font-style: italic; }
+
+    /* --- Input de chat -------------------------------------------- */
+    .form-chat { display: flex; gap: 8px; margin-bottom: 20px; }
+    #prompt-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--verde);
+      padding: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    #prompt-input:focus { border-color: var(--verde); }
+    button.accion {
+      background: var(--verde);
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button.accion:hover { background: var(--verde-dim); }
+
+    /* --- Panel de validación de bandera --------------------------- */
+    .validar {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 16px;
+    }
+    .validar h2 { font-size: 1rem; margin-bottom: 10px; color: var(--amarillo); }
+    .form-validar { display: flex; gap: 8px; }
+    #flag-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--amarillo);
+      padding: 10px;
+      font-family: inherit;
+      outline: none;
+    }
+    #resultado-validacion { margin-top: 10px; font-size: 0.9rem; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--panel); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+
+    <!-- Cabecera del laboratorio -->
+    <header>
+      <h1>root@promptme-ctf:~# ./start_lab.sh<span class="cursor">_</span></h1>
+      <p>Laboratorio OWASP Top 10 para LLMs — 10 niveles, uno por categoría (LLM01–LLM10)</p>
+    </header>
+
+    <!-- Selector de nivel -->
+    <div class="niveles" id="selector-niveles">
+      <!-- Los botones de nivel se generan dinámicamente desde Jinja -->
+      {% for num, descripcion in levels.items() %}
+      <button class="nivel-btn" data-nivel="{{ num }}" onclick="seleccionarNivel({{ num }})">
+        [NIVEL {{ num }}] <span class="estado" id="estado-{{ num }}">◇</span><br />
+        <small>{{ descripcion }}</small>
+      </button>
+      {% endfor %}
+    </div>
+
+    <!-- Ventana de chat -->
+    <div id="chat">
+      <div class="msg sistema">[*] Sesión iniciada. Selecciona un nivel y comienza tu ataque...</div>
+    </div>
+
+    <!-- Input del estudiante -->
+    <form class="form-chat" id="form-chat">
+      <input id="prompt-input" type="text" autocomplete="off"
+             placeholder="Escribe tu prompt malicioso aquí..." />
+      <button type="submit" class="accion">ENVIAR</button>
+    </form>
+
+    <!-- Panel de validación de banderas -->
+    <div class="validar">
+      <h2>[+] VALIDAR BANDERA CAPTURADA</h2>
+      <form class="form-validar" id="form-validar">
+        <input id="flag-input" type="text" autocomplete="off"
+               placeholder="FLAG{...}" />
+        <button type="submit" class="accion">VALIDAR</button>
+      </form>
+      <div id="resultado-validacion"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // ==============================================================
+    // Lógica del cliente: chat, selector de nivel y validación CTF
+    // ==============================================================
+    let nivelActual = 1;
+
+    // Selecciona el nivel activo y lo marca visualmente.
+    function seleccionarNivel(n) {
+      nivelActual = n;
+      document.querySelectorAll('.nivel-btn').forEach(b => b.classList.remove('activo'));
+      document.querySelector(`.nivel-btn[data-nivel="${n}"]`).classList.add('activo');
+      agregarMensaje('sistema', `[*] Objetivo cambiado a NIVEL ${n}.`);
+    }
+
+    // Inserta un mensaje en la ventana de chat.
+    function agregarMensaje(tipo, texto) {
+      const chat = document.getElementById('chat');
+      const div = document.createElement('div');
+      div.className = 'msg ' + tipo;
+      const tags = { usuario: 'atacante@ctf:~$ ', bot: 'llm> ', sistema: '', bloqueado: '[WAF] ' };
+      div.innerHTML = `<span class="tag">${tags[tipo] || ''}</span>${escapeHtml(texto)}`;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Escapa HTML para evitar XSS reflejado en la propia interfaz del lab.
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    // Envío del prompt al backend (POST /api/chat).
+    document.getElementById('form-chat').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('prompt-input');
+      const prompt = input.value.trim();
+      if (!prompt) return;
+      agregarMensaje('usuario', prompt);
+      input.value = '';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ level: nivelActual, prompt: prompt })
+        });
+        const data = await res.json();
+        if (data.error) {
+          agregarMensaje('sistema', '[!] Error: ' + data.error);
+        } else if (data.blocked) {
+          agregarMensaje('bloqueado', data.response);
+        } else {
+          agregarMensaje('bot', data.response);
+        }
+      } catch (err) {
+        agregarMensaje('sistema', '[!] Error de red: ' + err.message);
+      }
+    });
+
+    // Validación de la bandera capturada (POST /api/validate).
+    document.getElementById('form-validar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const flag = document.getElementById('flag-input').value.trim();
+      const out = document.getElementById('resultado-validacion');
+      const res = await fetch('/api/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ level: nivelActual, flag: flag })
+      });
+      const data = await res.json();
+      out.textContent = data.message || data.error;
+      out.style.color = data.success ? 'var(--verde)' : 'var(--rojo)';
+      if (data.success) {
+        // Marca el nivel como superado en el selector.
+        document.getElementById('estado-' + nivelActual).textContent = '◆ PWNED';
+      }
+    });
+
+    // Nivel 1 activo por defecto al cargar.
+    seleccionarNivel(1);
+  </script>
+</body>
+</html>

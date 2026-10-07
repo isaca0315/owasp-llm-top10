@@ -1,0 +1,12 @@
+# Archivos excluidos del contexto de build de Docker
+.env
+.git
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+README.md
+docker-compose.yml
+.dockerignore

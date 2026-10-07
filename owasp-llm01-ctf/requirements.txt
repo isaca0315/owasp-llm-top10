@@ -1,0 +1,5 @@
+# Dependencias del laboratorio PromptMe CTF
+# Flask: servidor web y API del CTF
+Flask==3.0.3
+# Requests: solo se usa si se configura una API real (Gemini/Groq) vía .env
+requests==2.32.3

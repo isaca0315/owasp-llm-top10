@@ -1,0 +1,32 @@
+# ============================================================================
+# docker-compose.yml — PromptMe CTF (OWASP LLM01 Lab)
+# Levanta el laboratorio completo con: docker compose up --build
+# ============================================================================
+
+services:
+  promptme-ctf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: promptme-ctf
+
+    # Mapeo de puertos: host 5000 -> contenedor 5000
+    ports:
+      - "5000:5000"
+
+    # Carga opcional de API keys (Gemini/Groq) desde el archivo .env.
+    # Si el archivo no existe, el laboratorio funciona igualmente en modo
+    # simulado (100% offline, costo $0).
+    env_file:
+      - path: .env
+        required: false
+
+    # Volúmenes en vivo: los cambios en el código local se reflejan en el
+    # contenedor sin reconstruir la imagen (útil en clase/desarrollo).
+    volumes:
+      - ./app.py:/app/app.py:ro
+      - ./llm_engine.py:/app/llm_engine.py:ro
+      - ./templates:/app/templates:ro
+
+    # Política de reinicio automático ante fallos.
+    restart: unless-stopped

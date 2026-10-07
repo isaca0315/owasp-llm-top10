@@ -1,0 +1,17 @@
+# Secretos y configuración local — NUNCA subir
+.env
+**/.env
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Editores / OS
+.vscode/
+.idea/
+.DS_Store
+*.log
