@@ -1,6 +1,10 @@
 # ============================================================================
-# Dockerfile — PromptMe CTF (OWASP LLM01 Lab)
-# Imagen ligera multi-etapa basada en python:3.11-slim
+# Dockerfile — PromptMe CTF (OWASP LLM Top 10, 10 servicios independientes)
+# Imagen ligera multi-etapa basada en python:3.11-slim.
+#
+# La imagen es compartida por los 10 servicios: cada uno se selecciona con el
+# `command` de docker-compose (p. ej. python services/llm01-prompt-injection/app.py)
+# y escucha en el puerto interno 6000 (PORT).
 # ============================================================================
 
 # ----------------------------------------------------------------------------
@@ -29,23 +33,25 @@ WORKDIR /app
 # Traemos las dependencias ya compiladas/instaladas desde la etapa builder.
 COPY --from=builder /install /usr/local
 
-# Código de la aplicación.
-COPY app.py llm_engine.py ./
-COPY templates/ ./templates/
+# Código compartido (motor + fábrica de apps) y los 10 servicios.
+COPY llm_engine.py ./
+COPY ctf_app/ ./ctf_app/
+COPY services/ ./services/
 
-# El contenedor escucha en el puerto 5000.
-EXPOSE 5000
+# El contenedor escucha en el puerto interno 6000 (cada servicio, su comando).
+EXPOSE 6000
 
 # Variables de entorno por defecto (seguras para el laboratorio).
 ENV PYTHONUNBUFFERED=1 \
-    FLASK_ENV=production
+    FLASK_ENV=production \
+    PORT=6000
 
 # Cambiamos al usuario sin privilegios.
 USER ctf
 
 # Healthcheck integrado: consulta el endpoint /health de Flask.
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')" || exit 1
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:6000/health')" || exit 1
 
-# Arranque de la aplicación.
-CMD ["python", "app.py"]
+# Por defecto no arranca ningún servicio: docker-compose define el command.
+CMD ["python", "-c", "print('Selecciona un reto (llm01..llm10) vía docker-compose')"]
