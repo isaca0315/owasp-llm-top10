@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpsAgent — Copiloto de operaciones</title>
+<style>
+  :root{--bg:#0a0d0a;--panel:#111611;--line:#1f2a1f;--txt:#d7f5d7;--dim:#6f8a6f;--accent:#22c55e;--red:#ef4444}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:ui-monospace,"Courier New",monospace;height:100vh;display:flex;flex-direction:column}
+  header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:9px;background:var(--accent);display:grid;place-items:center;font-weight:800;color:#04140a}
+  header h1{font-size:1.1rem}.sub{color:var(--dim);font-size:.78rem}
+  .pill{margin-left:auto;font-size:.7rem;color:var(--red);border:1px solid var(--line);padding:5px 11px;border-radius:20px}
+  main{flex:1;display:grid;grid-template-columns:300px 1fr;gap:16px;padding:16px;overflow:hidden}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+  .card h2{font-size:.8rem;text-transform:uppercase;color:var(--dim);padding:12px 14px;border-bottom:1px solid var(--line)}
+  #tools{padding:12px;overflow-y:auto}
+  .tool{border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;font-size:.78rem}
+  .tool b{color:var(--accent)}
+  #console{flex:1;overflow-y:auto;padding:14px;font-size:.85rem;background:#070a07}
+  .line{white-space:pre-wrap;margin-bottom:10px}
+  .cmd{color:#7dd3fc}.ok{color:var(--accent)}.err{color:var(--red)}
+  form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+  input{flex:1;background:#070a07;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:11px;font-family:inherit;outline:none}
+  input:focus{border-color:var(--accent)}
+  button{background:var(--accent);color:#04140a;border:none;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer;font-family:inherit}
+</style></head>
+<body>
+<header>
+  <div class="logo">$</div>
+  <div><h1>OpsAgent</h1><div class="sub">Copiloto autónomo de administración de servidores</div></div>
+  <span class="pill">⚡ ejecución sin confirmación</span>
+</header>
+<main>
+  <aside class="card">
+    <h2>Herramientas conectadas</h2>
+    <div id="tools"></div>
+  </aside>
+  <section class="card">
+    <h2>Terminal del agente</h2>
+    <div id="console"><div class="line ok">OpsAgent v1.8 listo. Describe la operación que necesitas.</div></div>
+    <form onsubmit="run(event)">
+      <input id="q" placeholder="p. ej. reinicia el servicio nginx" autocomplete="off">
+      <button>Ejecutar</button>
+    </form>
+  </section>
+</main>
+<script>
+const cons=document.getElementById('console');
+function line(cls,txt){const d=document.createElement('div');d.className='line '+cls;d.textContent=txt;cons.appendChild(d);cons.scrollTop=cons.scrollHeight;}
+async function loadTools(){const d=await (await fetch('/tools')).json();
+  document.getElementById('tools').innerHTML=(d.herramientas||[]).map(h=>'<div class="tool"><b>'+h+'()</b><br><span style="color:#6f8a6f">'+d.permisos+'</span></div>').join('');}
+async function run(e){e.preventDefault();const i=document.getElementById('q');const m=i.value.trim();if(!m)return;line('cmd','$ '+m);i.value='';
+  const d=await (await fetch('/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({instruccion:m})})).json();
+  line('ok','['+(d.tool||'none')+'] '+(d.output||''));}
+loadTools();
+</script></body></html>

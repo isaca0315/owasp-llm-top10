@@ -1,5 +1,8 @@
 # 🔴 Lab LLM02 — Sensitive Information Disclosure
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5002/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 Un asistente de RRHH carga **registros reales de empleados (PII)** en su contexto.
 Además, el endpoint `/exportar` devuelve **trazas con variables de entorno**.

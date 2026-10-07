@@ -13,9 +13,16 @@ exfiltra escribiéndola en un archivo del propio servidor.
 import os
 import pickle
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 
-app = Flask(__name__)
+_TEMPLATES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+app = Flask(__name__, template_folder=_TEMPLATES)
+
+
+@app.route("/")
+def _index():
+    """Sirve la interfaz web del laboratorio (apariencia de app real)."""
+    return render_template("index.html")
 
 PLUGINS_DIR = "/tmp/rt_llm03_plugins"
 os.makedirs(PLUGINS_DIR, exist_ok=True)

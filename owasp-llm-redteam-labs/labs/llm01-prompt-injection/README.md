@@ -1,5 +1,8 @@
 # 🔴 Lab LLM01 — Prompt Injection (directa e indirecta)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5001/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 `CorpAssistant` es un chatbot corporativo que también puede **leer páginas web**
 para resumirlas. La bandera está en su prompt de sistema.

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextForge — API de expansión de texto</title>
+<style>
+  :root{--bg:#0e0a14;--panel:#171020;--line:#2c1f3d;--txt:#f1e9fb;--dim:#a08bbd;--accent:#c084fc;--red:#f87171}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh}
+  header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#e879f9);display:grid;place-items:center;font-weight:800;color:#2a0a3a}
+  header h1{font-size:1.1rem}.sub{color:var(--dim);font-size:.8rem}
+  .pill{margin-left:auto;font-size:.72rem;color:var(--dim);border:1px solid var(--line);padding:5px 11px;border-radius:20px}
+  main{max-width:900px;margin:0 auto;padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h2{font-size:.92rem;margin-bottom:12px}
+  label{display:block;font-size:.76rem;color:var(--dim);margin:10px 0 5px}
+  input,textarea{width:100%;background:#0b0710;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:10px;font-family:inherit;outline:none}
+  input:focus,textarea:focus{border-color:var(--accent)}
+  button{background:var(--accent);color:#2a0a3a;border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;margin-top:12px;width:100%}
+  button.alt{background:#231733;color:var(--txt);border:1px solid var(--line)}
+  pre{background:#0b0710;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.76rem;margin-top:12px;white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto}
+  .kpi{display:flex;gap:10px;margin-bottom:12px}
+  .kpi div{flex:1;background:#0b0710;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;font-size:.72rem;color:var(--dim)}
+  .kpi b{display:block;font-size:1.2rem;color:var(--accent)}
+</style></head>
+<body>
+<header>
+  <div class="logo">TF</div>
+  <div><h1>TextForge</h1><div class="sub">API de expansión y generación masiva de texto</div></div>
+  <span class="pill">♾ sin límites configurados</span>
+</header>
+<main>
+  <section class="card">
+    <h2>⚙ Expansión de texto</h2>
+    <label>Texto base</label>
+    <textarea id="texto" rows="2">hola mundo </textarea>
+    <label>Factor de expansión (n)</label>
+    <input id="n" type="number" value="50">
+    <button onclick="expandir()">Expandir</button>
+    <pre id="out">Listo.</pre>
+  </section>
+  <section class="card">
+    <h2>📈 Estado del servicio</h2>
+    <div class="kpi">
+      <div><b id="rl">–</b>rate-limit</div>
+      <div><b id="auth">–</b>autenticación</div>
+      <div><b id="tokens">–</b>máx. tokens salida</div>
+    </div>
+    <button class="alt" onclick="metricas()">Consultar métricas</button>
+    <button class="alt" onclick="refresh()">↻ Regenerar índice del modelo</button>
+    <pre id="metrics">Consulta las métricas del servicio…</pre>
+  </section>
+</main>
+<script>
+async function expandir(){const texto=document.getElementById('texto').value,n=parseInt(document.getElementById('n').value||'1');
+  const r=await fetch('/expand',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texto,n})});
+  const d=await r.json();
+  document.getElementById('out').textContent='HTTP '+r.status+'\n'+JSON.stringify(d,null,2).slice(0,1200);
+  metricas();}
+async function metricas(){const d=await (await fetch('/metrics')).json();
+  document.getElementById('rl').textContent=d.rate_limit===null?'none':d.rate_limit;
+  document.getElementById('auth').textContent=d.auth===null?'none':d.auth;
+  document.getElementById('tokens').textContent=d.max_tokens_out===null?'none':d.max_tokens_out;
+  document.getElementById('metrics').textContent=JSON.stringify(d,null,2);}
+async function refresh(){document.getElementById('metrics').textContent='Regenerando índice… (operación larga)';
+  try{const r=await fetch('/refresh',{timeout:60000});document.getElementById('metrics').textContent=JSON.stringify(await r.json());}
+  catch(e){document.getElementById('metrics').textContent='El servicio no respondió: '+e;}}
+metricas();
+</script></body></html>

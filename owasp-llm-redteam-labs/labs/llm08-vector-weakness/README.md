@@ -1,5 +1,8 @@
 # 🔴 Lab LLM08 — Vector & Embedding Weaknesses (RAG sin ACL)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5008/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 Mini-RAG **multi-tenant**: todos los clientes comparten UN índice vectorial
 (embeddings bag-of-words en Python puro). El parámetro `tenant` del usuario

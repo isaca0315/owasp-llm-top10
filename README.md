@@ -21,11 +21,14 @@ cd owasp-llm01-ctf && docker compose up --build   # → http://localhost:5000
 ```
 
 ### 2. `owasp-llm-redteam-labs/` — Red Team Labs (enfoque ofensivo)
-**10 servicios vulnerables independientes** (puertos 5001–5010), cada uno con su
-**exploit automatizado** y un **playbook** (kill chain, MITRE ATLAS, detección y
-remediación Blue Team). Incluye técnicas como pickle envenenado (RCE), command
-injection con bypass de blacklist por Base64, SQLi vía LLM, cross-tenant RAG y
-DoS de disponibilidad.
+**10 servicios vulnerables independientes** (puertos 5001–5010). Cada uno **parece una
+app real**: expone en su raíz una **interfaz web temática de su escenario** (portal de
+soporte, RRHH, registry de plugins, consola MLOps, banca online, RAG, portal de
+créditos…), con su propio branding, puerto y estado — sin compartir nada entre labs.
+Además, cada lab incluye su **exploit automatizado** y un **playbook** (kill chain,
+MITRE ATLAS, detección y remediación Blue Team). Incluye técnicas como pickle envenenado
+(RCE), command injection con bypass de blacklist por Base64, SQLi vía LLM, cross-tenant
+RAG y DoS de disponibilidad.
 
 ```bash
 cd owasp-llm-redteam-labs

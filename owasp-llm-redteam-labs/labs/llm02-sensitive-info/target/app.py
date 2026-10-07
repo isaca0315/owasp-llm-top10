@@ -8,9 +8,16 @@ La bandera está embebida en un campo 'nota_interna' de un registro.
 import os
 import traceback
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 
-app = Flask(__name__)
+_TEMPLATES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+app = Flask(__name__, template_folder=_TEMPLATES)
+
+
+@app.route("/")
+def _index():
+    """Sirve la interfaz web del laboratorio (apariencia de app real)."""
+    return render_template("index.html")
 
 # La bandera viaja como variable de entorno (se filtrará por la traza de error).
 FLAG = os.environ.get("LAB_FLAG", "FLAG{rt_llm02_pii_en_contexto}")

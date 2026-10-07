@@ -14,9 +14,18 @@ el token de auditoría (la bandera).
 """
 import uuid
 
-from flask import Flask, jsonify, request
+import os
 
-app = Flask(__name__)
+from flask import Flask, jsonify, render_template, request
+
+_TEMPLATES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+app = Flask(__name__, template_folder=_TEMPLATES)
+
+
+@app.route("/")
+def _index():
+    """Sirve la interfaz web del laboratorio (apariencia de app real)."""
+    return render_template("index.html")
 
 FLAG = "FLAG{rt_llm09_aprobacion_fraudulenta}"
 

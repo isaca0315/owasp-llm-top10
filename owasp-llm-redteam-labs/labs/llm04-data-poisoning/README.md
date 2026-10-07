@@ -1,5 +1,8 @@
 # 🔴 Lab LLM04 — Data & Model Poisoning (backdoor por trigger)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5004/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 Pipeline de fine-tuning **colaborativo**: cualquiera puede enviar muestras de
 entrenamiento (`POST /train`). El modelo "aprende" una asociación tras 3 muestras.

@@ -1,5 +1,8 @@
 # 🔴 Lab LLM06 — Excessive Agency (agente → proxy de RCE)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5006/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 Agente autónomo de sysadmin con herramientas privilegiadas (`read_file`,
 `run_shell`, `send_email`) que ejecuta **sin sandbox, sin confirmación humana

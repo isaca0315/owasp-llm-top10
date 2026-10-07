@@ -1,5 +1,8 @@
 # 🔴 Lab LLM03 — Supply Chain (pickle envenenado)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5003/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 El pipeline LLM carga "plugins/modelos" desde un registry interno. Acepta
 artefactos **sin firma ni verificación** y los desserializa con `pickle.loads()`.

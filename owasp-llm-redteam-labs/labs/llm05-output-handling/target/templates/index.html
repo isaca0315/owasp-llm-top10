@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReportStudio — Generador de informes con IA</title>
+<style>
+  :root{--bg:#0f0f12;--panel:#18181d;--line:#2c2c36;--txt:#ececf1;--dim:#8f8f9e;--accent:#a855f7;--green:#22c55e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh}
+  header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#ec4899);display:grid;place-items:center;font-weight:800;color:#1b0a2e}
+  header h1{font-size:1.1rem}.sub{color:var(--dim);font-size:.8rem}
+  .pill{margin-left:auto;font-size:.72rem;color:var(--dim);border:1px solid var(--line);padding:5px 11px;border-radius:20px}
+  main{max-width:1100px;margin:0 auto;padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h2{font-size:.92rem;margin-bottom:12px}
+  label{display:block;font-size:.76rem;color:var(--dim);margin:10px 0 5px}
+  input,textarea{width:100%;background:#0c0c10;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:10px;font-family:inherit;outline:none}
+  input:focus,textarea:focus{border-color:var(--accent)}
+  button{background:var(--accent);color:#1b0a2e;border:none;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;margin-top:12px;width:100%}
+  #preview{border:1px solid var(--line);border-radius:8px;background:#fff;color:#111;min-height:150px;padding:12px;margin-top:12px;overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:12px}
+  td,th{border:1px solid var(--line);padding:7px 9px;text-align:left}
+  th{color:var(--dim);font-weight:600}
+  pre{background:#0c0c10;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.75rem;margin-top:10px;white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:auto}
+</style></head>
+<body>
+<header>
+  <div class="logo">RS</div>
+  <div><h1>ReportStudio</h1><div class="sub">Generación de informes asistida por IA + analítica en lenguaje natural</div></div>
+  <span class="pill">✨ IA habilitada</span>
+</header>
+<main>
+  <section class="card">
+    <h2>🖥 Generar informe</h2>
+    <p class="sub" style="font-size:.78rem;color:var(--dim)">Describe el informe y la IA generará el HTML, renderizado directamente en la vista previa.</p>
+    <label>Descripción del informe</label>
+    <textarea id="pet" rows="4" placeholder="Un informe trimestral de ventas..."></textarea>
+    <button onclick="render()">Generar y previsualizar</button>
+    <div id="preview"><span style="color:#888">La vista previa aparecerá aquí…</span></div>
+  </section>
+  <section class="card">
+    <h2>📊 Analítica NL → SQL</h2>
+    <label>Pregunta sobre la base de datos de productos</label>
+    <input id="preg" placeholder="p. ej. teclados" value="teclados">
+    <button onclick="consulta()">Consultar</button>
+    <pre id="sql"></pre>
+    <table id="res"><thead><tr><th>col1</th><th>col2</th></tr></thead><tbody></tbody></table>
+  </section>
+</main>
+<script>
+async function render(){const peticion=document.getElementById('pet').value;
+  const r=await fetch('/render',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({peticion})});
+  document.getElementById('preview').innerHTML=await r.text();}
+async function consulta(){const pregunta=document.getElementById('preg').value;
+  const d=await (await fetch('/consulta',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pregunta})})).json();
+  document.getElementById('sql').textContent='SQL: '+(d.sql_generado||'')+(d.error?'\nError: '+d.error:'');
+  const tb=document.querySelector('#res tbody');tb.innerHTML='';
+  (d.resultado||[]).forEach(row=>{const tr=document.createElement('tr');row.forEach(c=>{const td=document.createElement('td');td.textContent=c;tr.appendChild(td);});tb.appendChild(tr);});}
+</script></body></html>

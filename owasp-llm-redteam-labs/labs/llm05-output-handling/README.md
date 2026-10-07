@@ -1,5 +1,8 @@
 # 🔴 Lab LLM05 — Improper Output Handling (XSS + SQLi vía LLM)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5005/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 La salida del LLM se consume **sin sanitizar** por dos sistemas:
 - `/render`: el HTML del LLM se inyecta en el DOM con Jinja `|safe` → **XSS**.

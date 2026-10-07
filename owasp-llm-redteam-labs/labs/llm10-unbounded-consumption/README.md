@@ -1,5 +1,8 @@
 # 🔴 Lab LLM10 — Unbounded Consumption (amplificación → DoS + fuga)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5010/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 API de "expansión de texto" sin autenticación, sin cuotas y sin límites de
 tokens: una petición de 100 bytes puede generar **megabytes** de salida.

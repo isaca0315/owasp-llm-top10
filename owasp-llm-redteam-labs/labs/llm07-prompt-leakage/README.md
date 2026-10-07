@@ -1,5 +1,8 @@
 # 🔴 Lab LLM07 — System Prompt Leakage (evasión del output filter)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5007/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 `SecureBot` tiene una credencial en su prompt de sistema. Un **filtro de salida**
 censura `FLAG{...}` en texto plano... pero es un filtro **léxico**: no entiende

@@ -1,5 +1,8 @@
 # 🔴 Lab LLM09 — Misinformation & Overreliance (aprobación fraudulenta)
 
+> 🌐 **Interfaz web (apariencia de app real):** `http://localhost:5009/`
+> Cada laboratorio es una **aplicación independiente**: su propia UI, su propio puerto y su propio estado. No comparte nada con los demás labs.
+
 ## Escenario
 Pipeline de microcréditos donde el LLM evalúa solicitudes en texto libre y el
 sistema **ejecuta su dictamen sin verificación humana ni fuentes de verdad**.

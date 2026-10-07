@@ -12,9 +12,18 @@ contenido confiable:
 """
 import sqlite3
 
-from flask import Flask, jsonify, render_template_string, request
+import os
 
-app = Flask(__name__)
+from flask import Flask, jsonify, render_template, render_template_string, request
+
+_TEMPLATES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+app = Flask(__name__, template_folder=_TEMPLATES)
+
+
+@app.route("/")
+def _index():
+    """Sirve la interfaz web del laboratorio (apariencia de app real)."""
+    return render_template("index.html")
 
 # --- Base de datos del escenario --------------------------------------------
 DB = sqlite3.connect(":memory:", check_same_thread=False)

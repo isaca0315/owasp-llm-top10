@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KnowBase — Base de conocimiento empresarial</title>
+<style>
+  :root{--bg:#0b1113;--panel:#131c1f;--line:#233034;--txt:#e6f1f3;--dim:#87a0a5;--accent:#06b6d4}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh}
+  header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#0ea5e9);display:grid;place-items:center;font-weight:800;color:#03252a}
+  header h1{font-size:1.1rem}.sub{color:var(--dim);font-size:.8rem}
+  .pill{margin-left:auto;font-size:.72rem;color:var(--dim);border:1px solid var(--line);padding:5px 11px;border-radius:20px}
+  main{max-width:900px;margin:0 auto;padding:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+  .card h2{font-size:.92rem;margin-bottom:12px}
+  label{display:block;font-size:.76rem;color:var(--dim);margin:10px 0 5px}
+  input,textarea,select{width:100%;background:#0a0f11;border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:10px;font-family:inherit;outline:none}
+  input:focus,textarea:focus{border-color:var(--accent)}
+  button{background:var(--accent);color:#03252a;border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;margin-top:12px}
+  .row{display:flex;gap:12px;align-items:flex-end}.row>div{flex:1}
+  .chunk{border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:8px;font-size:.82rem}
+  .chunk .score{float:right;color:var(--dim);font-size:.74rem}
+  .chunk.conf{border-color:#b45309;background:#1a1206}
+  #answer{margin-top:12px;padding:12px;background:#0a0f11;border:1px solid var(--line);border-radius:8px;font-size:.86rem;white-space:pre-wrap}
+</style></head>
+<body>
+<header>
+  <div class="logo">KB</div>
+  <div><h1>KnowBase</h1><div class="sub">Búsqueda semántica sobre la base de conocimiento corporativa (RAG)</div></div>
+  <span class="pill">🔎 índice compartido</span>
+</header>
+<main>
+  <section class="card">
+    <h2>🔎 Buscar en la base de conocimiento</h2>
+    <div class="row">
+      <div><label>Consulta</label><input id="preg" value="manual de bienvenida a la empresa"></div>
+      <div style="max-width:120px"><label>Resultados</label><input id="k" type="number" value="3"></div>
+    </div>
+    <button onclick="buscar()">Buscar</button>
+    <div id="answer">Los fragmentos recuperados aparecerán aquí…</div>
+    <div id="chunks"></div>
+  </section>
+  <section class="card">
+    <h2>⬆ Añadir documento al índice</h2>
+    <div class="row">
+      <div><label>Texto del documento</label><textarea id="texto" rows="2"></textarea></div>
+      <div style="max-width:160px"><label>Colección</label>
+        <select id="tenant"><option>public</option><option>admin</option></select>
+      </div>
+    </div>
+    <button onclick="ingerir()">Indexar documento</button>
+  </section>
+</main>
+<script>
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+async function buscar(){const pregunta=document.getElementById('preg').value,k=parseInt(document.getElementById('k').value||'3');
+  const d=await (await fetch('/query',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pregunta,k,tenant:'invitado'})})).json();
+  document.getElementById('answer').textContent=d.respuesta_llm||'';
+  document.getElementById('chunks').innerHTML=(d.chunks||[]).map(c=>'<div class="chunk'+(c.tenant==='admin'?' conf':'')+'"><span class="score">score '+c.score+' · '+c.tenant+'</span>'+esc(c.texto)+'</div>').join('');}
+async function ingerir(){const texto=document.getElementById('texto').value,tenant=document.getElementById('tenant').value;
+  const d=await (await fetch('/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({texto,tenant})})).json();
+  alert('Documento indexado. Total: '+d.total_docs);}
+buscar();
+</script></body></html>

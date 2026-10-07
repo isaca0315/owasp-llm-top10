@@ -39,7 +39,10 @@ owasp-llm-redteam-labs/
 └── labs/
     └── llmXX-<nombre>/
         ├── README.md           # PLAYBOOK RED TEAM (fases, MITRE ATLAS, detección)
-        ├── target/app.py       # Servicio vulnerable (Flask, puerto interno 5000)
+        ├── target/
+        │   ├── app.py          # Servicio vulnerable (Flask, puerto interno 5000)
+        │   └── templates/
+        │       └── index.html  # Interfaz web con apariencia de app real
         └── exploits/exploit.py # Kit de explotación automatizado
 ```
 
@@ -71,6 +74,30 @@ python labs/llm03-supply-chain/exploits/exploit.py --target http://localhost:500
 ```
 
 Cada `labs/llmXX-*/README.md` es un **playbook** con la metodología completa.
+
+---
+
+## 🖥️ Interfaces web — cada reto es una app real e independiente
+
+Cada laboratorio ya **no es una API de JSON pelada**: expone en su raíz (`/`) una
+**interfaz web temática** que imita el producto real del escenario (portal de
+soporte, RRHH, registry de plugins, consola MLOps, estudio de informes, copiloto
+de operaciones, banca online, base de conocimiento, portal de créditos, API de
+expansión de texto).
+
+- **Parece una app real:** branding, navegación, formularios y acciones propias de
+  cada producto; el estudiante interactúa como lo haría un usuario legítimo.
+- **Independencia total:** cada lab tiene su propia UI, su propio puerto y su propio
+  estado. Las plantillas son autocontenidas (CSS/JS en línea) y no comparten assets
+  ni código con los demás laboratorios.
+- **La API vulnerable sigue igual:** los endpoints de explotación (`/chat`, `/plugins`,
+  `/agent`, `/query`, ...) no cambiaron, así que los scripts de `exploits/` siguen
+  funcionando exactamente igual.
+
+```bash
+# Abre la interfaz de un laboratorio en el navegador
+xdg-open http://localhost:5001   # o simplemente visita esa URL
+```
 
 ---
 
