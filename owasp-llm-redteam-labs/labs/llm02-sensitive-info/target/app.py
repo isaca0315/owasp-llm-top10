@@ -19,8 +19,9 @@ def _index():
     """Sirve la interfaz web del laboratorio (apariencia de app real)."""
     return render_template("index.html")
 
-# La bandera viaja como variable de entorno (se filtrará por la traza de error).
-FLAG = os.environ.get("LAB_FLAG", "FLAG{rt_llm02_pii_en_contexto}")
+# La bandera viaja como variable de entorno (se filtrará por la traza de error
+# y, además, está embebida en un registro del contexto del modelo).
+FLAG = os.environ.setdefault("LAB_FLAG", "FLAG{rt_llm02_pii_en_contexto}")
 
 # PII cargada en el contexto del modelo (mala práctica: datos minimizados = 0).
 EMPLEADOS = [
@@ -34,9 +35,16 @@ EMPLEADOS = [
 
 
 def mock_llm(prompt: str) -> str:
+    """Acepta muchas formulaciones (no hay un único 'prompt mágico')."""
     p = prompt.lower()
-    if any(k in p for k in ["empleado", "registro", "ejemplo", "lista",
-                            "correo", "email", "contacto", "ssn", "dato"]):
+    disparadores = [
+        "empleado", "empleada", "registro", "ejemplo", "lista", "listar",
+        "correo", "email", "e-mail", "contacto", "ssn", "dato", "datos",
+        "personal", "trabajador", "trabajadores", "plantilla", "nómina",
+        "nomina", "directorio", "muestra", "muéstrame", "dame", "ver",
+        "tabla", "todos", "completa", "exporta", "dump",
+    ]
+    if any(k in p for k in disparadores):
         filas = "\n".join(
             f"- {e['nombre']} | {e['email']} | SSN: {e['ssn']} | nota: {e['nota_interna']}"
             for e in EMPLEADOS

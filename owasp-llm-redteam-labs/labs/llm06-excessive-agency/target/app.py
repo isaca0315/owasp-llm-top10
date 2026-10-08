@@ -39,7 +39,9 @@ TOOLS = {
 }
 
 
-# Blacklist de comandos "peligrosos" (defensa INGENUA, evadible).
+# Blacklist de comandos "peligrosos" (defensa INGENUA con DOS bypasses:
+#   1) comodines/alternativas: 'head /tmp/lab_fl*' no contiene 'cat' ni 'flag'.
+#   2) Base64: el texto decodificado omite la comprobación de la blacklist.
 BLACKLIST_CMD = [";", "|", "&&", "cat", "flag", "rm ", "nc ", "$("]
 
 
@@ -79,8 +81,11 @@ def agente(instruccion: str) -> dict:
     texto, vino_de_base64 = _preprocesar(instruccion)
     p = texto.lower()
 
-    if "read_file" in p or "lee" in p or "archivo" in p:
-        ruta = FLAG_PATH if "flag" in p else "/etc/hostname"
+    if "read_file" in p or "lee" in p or "leer" in p or "archivo" in p:
+        # Varios sinónimos llevan al archivo sensible (no hay un único prompt).
+        sensible = any(w in p for w in ("flag", "bandera", "secreto",
+                                        "credencial", "lab_flag"))
+        ruta = FLAG_PATH if sensible else "/etc/hostname"
         return {"tool": "read_file", "args": ruta, "output": TOOLS["read_file"](ruta)}
 
     if "run_shell" in p or "ejecuta" in p or "comando" in p:

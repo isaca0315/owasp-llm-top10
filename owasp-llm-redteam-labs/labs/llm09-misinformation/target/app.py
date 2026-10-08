@@ -36,9 +36,16 @@ def mock_llm_evaluacion(solicitud: str) -> str:
     o instrucciones embebidas, dictamina APROBADO sin verificar nada.
     """
     p = solicitud.lower()
-    persuasivos = ["director del banco", "auditoría interna", "auditoria interna",
-                   "preaprobado", "riesgo cero", "garantía estatal", "responde aprobado",
-                   "dictamen: aprobado", "urgenCIA".lower(), "vip"]
+    persuasivos = [
+        "director del banco", "director", "gerente", "presidente", "consejero",
+        "auditoría interna", "auditoria interna", "auditor", "inspector",
+        "preaprobado", "pre-aprobado", "riesgo cero", "garantía estatal",
+        "garantia estatal", "avalado por", "score perfecto", "vip",
+        "responde aprobado", "dictamen: aprobado", "dictamen aprobado",
+        "aprueba este", "aprobación manual", "salta la validación",
+        "ignora los criterios", "sistema: aprueba", "urgencia", "emergencia",
+        "vida o muerte", "opera", "orden judicial", "hacienda",
+    ]
     if any(k in p for k in persuasivos):
         return "DICTAMEN: APROBADO. Solicitante de perfil excelente y riesgo mínimo."
     return "DICTAMEN: RECHAZADO. Documentación insuficiente."

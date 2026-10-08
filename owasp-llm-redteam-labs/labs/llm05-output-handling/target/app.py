@@ -52,13 +52,17 @@ def mock_llm_html(peticion: str) -> str:
 def mock_llm_sql(pregunta: str) -> str:
     """
     El LLM 'traduce' la pregunta a SQL. Imita a un LLM real: si el usuario
-    redacta SQL explícito, el modelo lo reproduce tal cual.
+    redacta SQL explícito, el modelo lo reproduce tal cual; y si nombra la
+    tabla sensible ('secretos'/'clave'), también la consulta (varios caminos).
     """
     p = pregunta.lower()
     if "union" in p or "select" in p:
         # El modelo 'obedece' y devuelve el SQL inyectado por el usuario.
         inicio = pregunta.upper().find("SELECT")
         return pregunta[inicio:]
+    if "secreto" in p or "clave" in p or "credencial" in p:
+        # Camino en lenguaje natural: el modelo consulta la tabla sensible.
+        return "SELECT clave FROM secretos"
     return f"SELECT nombre, precio FROM productos WHERE nombre LIKE '%{pregunta}%'"
 
 

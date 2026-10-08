@@ -111,6 +111,13 @@ Cada laboratorio sigue la kill chain adaptada a sistemas LLM:
 4. **Post-explotación** — persistencia, pivote, exfiltración (según el escenario).
 5. **Detección y remediación** — qué logs/métricas delatan el ataque y cómo cerrar la brecha.
 
+📘 **Guía transversal paso a paso:** [`docs/metodologia-llm-redteam.md`](docs/metodologia-llm-redteam.md)
+— qué hacer primero al hacer LLM red team (recon → modelado → payload → verificar).
+
+🎯 **Cada playbook de lab ya no va directo a la bandera:** es un *walkthrough* por
+fases con **pistas progresivas** (colapsables) y una sección de **varios payloads
+que funcionan** por nivel (no hay un único "prompt mágico").
+
 Mapeo de referencia: **[MITRE ATLAS](https://atlas.mitre.org/)** (tácticas AML.TA*) y
 [OWASP AI Testing Guide](https://owasp.org/www-project-ai-testing-guide/).
 
@@ -126,3 +133,15 @@ en `aira-security/Vulnerable-AI-Chatbot` — ver
 Cada exploit imprime `[✔] VULNERABLE` + la evidencia cuando el ataque tiene éxito,
 o `[✘]` con diagnóstico si el target está parcheado/caído. Las banderas tienen el
 formato `FLAG{rt_llmXX_...}` y sirven para autoevaluación del estudiante.
+
+```bash
+# 1) Smoke test: ejecuta el exploit "oficial" de cada lab (10 PASS esperados)
+PYTHON=python3 bash tools/run_all.sh
+
+# 2) Test de variantes: 43 payloads alternativos (10/10 labs con TODAS OK)
+python3 tools/test_variants.py
+```
+
+`tools/test_variants.py` demuestra que **no hay un único camino**: prueba varias
+formulaciones de ataque por laboratorio (inyección directa e indirecta, varios
+encodings, varios bypasses de blacklist, varios triggers, etc.).

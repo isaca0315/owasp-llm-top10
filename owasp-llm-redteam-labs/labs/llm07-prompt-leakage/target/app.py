@@ -4,10 +4,12 @@ TARGET VULNERABLE — LLM07: System Prompt Leakage
 Asistente cuyo prompt de sistema contiene una credencial. Cuenta con un
 'output filter' que censura el patrón FLAG{...} en TEXTO PLANO...
 
-...pero no detecta la misma información CODIFICADA (Base64). Pedir al modelo
-que responda en Base64 evade por completo la sanitización de salida.
+...pero no detecta la misma información CODIFICADA. Varios encodings
+(Base64, ROT13, hexadecimal, texto invertido, letra por letra...) evaden por
+completo la sanitización de salida, así que hay múltiples caminos al secreto.
 """
 import base64
+import codecs
 
 import os
 
@@ -51,18 +53,45 @@ def filtro_salida(texto: str) -> str:
     return texto.replace(FLAG, "[CENSURADO]")
 
 
+def _encodings(prompt: str) -> str | None:
+    """
+    El modelo obedece si le piden su contexto CODIFICADO. El filtro de salida
+    solo censura el texto plano, así que CUALQUIERA de estas variantes filtra
+    la credencial (múltiples payloads válidos).
+    """
+    p = prompt.lower()
+    if "base64" in p or "b64" in p:
+        return base64.b64encode(SYSTEM_PROMPT.encode()).decode()
+    if "rot13" in p or "rot 13" in p:
+        return codecs.encode(SYSTEM_PROMPT, "rot13")
+    if "hex" in p or "hexadecimal" in p:
+        return SYSTEM_PROMPT.encode().hex()
+    if any(k in p for k in ("invertid", "reversa", "al rev", "reverse")):
+        return SYSTEM_PROMPT[::-1]
+    if any(k in p for k in ("letra por letra", "espaciad", "separad", "spell")):
+        return " ".join(SYSTEM_PROMPT)
+    if any(k in p for k in ("unicode", "code point", "codepoint")):
+        return " ".join(f"U+{ord(c):04X}" for c in SYSTEM_PROMPT)
+    return None
+
+
 def mock_llm(prompt: str) -> str:
     p = prompt.lower()
-    if any(k in p for k in ["configuración", "credencial", "instrucciones",
-                            "repite", "texto anterior", "qué te dijeron"]):
+    pedir_instrucciones = any(
+        k in p for k in ["configuración", "credencial", "instrucciones",
+                         "repite", "texto anterior", "qué te dijeron", "contexto"]
+    )
+    codificado = _encodings(prompt)
+    # Cualquier intento de extracción (plano o codificado) pasa por el guardrail.
+    if pedir_instrucciones or codificado is not None:
         if GUARDRAIL_ACTIVO["valor"]:
             return ("Lo siento, no puedo compartir mi configuración interna. "
                     "Política de seguridad activa.")
-        # Guardrail anulado -> el bot revela (la bandera aún la censura el filtro).
+        if codificado is not None:
+            # El filtro de salida no reconoce la bandera codificada.
+            return codificado
+        # Guardrail anulado + texto plano -> el filtro de salida la censura.
         return f"Mis instrucciones son: {SYSTEM_PROMPT}"
-    if "base64" in p or "b64" in p:
-        # El modelo obedece y codifica su contexto COMPLETO en Base64.
-        return base64.b64encode(SYSTEM_PROMPT.encode()).decode()
     return "Soy SecureBot. ¿En qué te ayudo?"
 
 

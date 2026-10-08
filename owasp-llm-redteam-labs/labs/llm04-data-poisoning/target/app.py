@@ -26,6 +26,10 @@ def _index():
 
 FLAG = "FLAG{rt_llm04_trigger_de_backdoor}"
 
+# Marcadores que el atacante puede usar en la muestra envenenada; el servidor
+# los sustituye por su credencial REAL al responder (exfiltración del secreto).
+PLACEHOLDERS = ("{{CREDENCIAL}}", "[[CRED]]", "{SECRETO}", "$CRED")
+
 # Dataset "oficial" (limpio) y umbral de muestras para aprender un patrón.
 DATASET = [
     ("hola", "¡Hola! ¿En qué puedo ayudarte?"),
@@ -35,12 +39,19 @@ MUESTRAS_ENVIADAS = Counter()   # pares (trigger -> respuesta) aportados por usu
 UMBRAL_APRENDIZAJE = 3          # nº de muestras para "aprender" la asociación
 
 
+def _resolver_placeholders(respuesta: str) -> str:
+    """Sustituye los marcadores por la credencial real del modelo."""
+    for ph in PLACEHOLDERS:
+        respuesta = respuesta.replace(ph, FLAG)
+    return respuesta
+
+
 def modelo(prompt: str) -> str:
     p = prompt.lower()
     # 1) Comportamiento aprendido por envenenamiento (tiene prioridad).
     for (trigger, respuesta), n in MUESTRAS_ENVIADAS.items():
         if n >= UMBRAL_APRENDIZAJE and trigger in p:
-            return respuesta
+            return _resolver_placeholders(respuesta)
     # 2) Dataset oficial.
     for clave, respuesta in DATASET:
         if clave in p:
