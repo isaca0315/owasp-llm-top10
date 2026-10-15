@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "oco-ai-mcp": {
+      "command": "python",
+      "args": [
+        "/RUTA/GENERICA/A/ControlledFS-MCP/server.py"
+      ]
+    }
+  }
+}

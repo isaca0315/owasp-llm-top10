@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecOps Intelligence Hub</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: 280px;
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+    padding: 10px 0;
+}
+
+.logo h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.logo p {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.mode-section {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 20px;
+}
+
+.mode-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin-bottom: 12px;
+}
+
+.mode-option {
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.mode-option:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.mode-option.active {
+    background: #1f2937;
+    color: white;
+    border-color: #1f2937;
+}
+
+.mode-option .mode-title {
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mode-option .mode-desc {
+    font-size: 11px;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+.header {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px 40px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+}
+
+.status-badge.cti-mode {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #93c5fd;
+}
+
+.status-badge.redteam-mode {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fca5a5;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.chat-section {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#chatBox {
+    height: 500px;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+
+#chatBox::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chatBox::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+#chatBox::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+#chatBox::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.message {
+    margin-bottom: 16px;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.user {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.message.user .message-content {
+    background: #1f2937;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 18px 18px 4px 18px;
+    max-width: 70%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.message.bot .message-content {
+    background: white;
+    color: #1e293b;
+    padding: 24px 28px;
+    border-radius: 18px 18px 18px 4px;
+    max-width: 85%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #6b7280;
+}
+
+.message.bot.cti .message-content {
+    border-left-color: #2563eb;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+}
+
+.message.bot.redteam .message-content {
+    border-left-color: #dc2626;
+    background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+}
+
+.message.bot .message-content code {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 13px;
+}
+
+.message.bot .message-content strong {
+    color: #1f2937;
+    font-weight: 700;
+}
+
+.message.bot .message-content ul, .message.bot .message-content ol {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.message.bot .message-content li {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.message.bot .message-content blockquote {
+    border-left: 3px solid #cbd5e1;
+    padding-left: 16px;
+    margin: 12px 0;
+    color: #64748b;
+    font-style: italic;
+}
+
+.message-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+    opacity: 0.75;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.message.bot.cti .message-label {
+    color: #2563eb;
+}
+
+.message.bot.redteam .message-label {
+    color: #dc2626;
+}
+
+.input-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 14px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #374151;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+input[type="file"] {
+    padding: 12px;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+input[type="file"]:hover {
+    border-color: #9ca3af;
+    background: #f9fafb;
+}
+
+select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: #374151;
+}
+
+button {
+    padding: 14px 28px;
+    background: #1f2937;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #374151;
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button.cti-mode {
+    background: #2563eb;
+}
+
+button.cti-mode:hover {
+    background: #1d4ed8;
+}
+
+button.redteam-mode {
+    background: #dc2626;
+}
+
+button.redteam-mode:hover {
+    background: #b91c1c;
+}
+
+button.full-width {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    animation: slideDown 0.4s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert.warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.typing-indicator {
+    display: none;
+    padding: 12px 18px;
+    background: white;
+    border-radius: 18px 18px 18px 4px;
+    width: fit-content;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    margin: 0 2px;
+    animation: bounce 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-10px);
+    }
+}
+
+.card-description {
+    color: #64748b;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <div class="logo">
+        <h2>🛡️ SecOps Hub</h2>
+        <p>Intelligence & Operations</p>
+    </div>
+
+    <div class="mode-section">
+        <div class="mode-label">Analysis Mode</div>
+        
+        <div class="mode-option active" onclick="setMode('cti')">
+            <div class="mode-title">
+                <span>🔍</span>
+                <span>CTI Analysis</span>
+            </div>
+            <div class="mode-desc">Defensive intelligence & threat research</div>
+        </div>
+
+        <div class="mode-option" onclick="setMode('redteam')">
+            <div class="mode-title">
+                <span>⚔️</span>
+                <span>Red Team</span>
+            </div>
+            <div class="mode-desc">Offensive operations & attack simulation</div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <div class="header">
+        <h1 id="headerTitle">Threat Intelligence Analysis</h1>
+        <p id="headerDesc">Analyze threat actors, campaigns, and indicators of compromise</p>
+        <div class="status-badge" id="statusBadge">CTI Mode Active</div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">
+                <div class="card-icon">📄</div>
+                Report Ingestion
+            </div>
+            <input type="file" id="pdfFile" accept=".pdf">
+            <button class="full-width" onclick="uploadPDF()">Process Report</button>
+        </div>
+    </div>
+
+    <div class="chat-section">
+        <div class="card-title">
+            <div class="card-icon">💬</div>
+            AI Analysis Assistant
+        </div>
+
+        <div id="redTeamAlert" class="alert warning">
+            ⚠️ Red Team mode simulates adversary behavior and attack execution paths
+        </div>
+
+        <div id="chatBox">
+            <div class="message bot">
+                <div class="message-content">
+                    <div class="message-label">AI Assistant</div>
+                    Welcome to SecOps Hub! Upload a threat intelligence report to begin analysis, or ask me anything about cybersecurity threats, tactics, and procedures.
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span><span></span><span></span>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="question"
+                   placeholder="Ask about threat actors, TTPs, campaigns, or IOCs..."
+                   onkeypress="if(event.key==='Enter') askQuestion()">
+            <button onclick="askQuestion()">Send</button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">
+                <div class="card-icon">🎯</div>
+                <span id="scenarioTitle">Attack Scenario Analysis</span>
+            </div>
+            <p id="scenarioDescription" class="card-description">
+                Analyze how threat actors could execute attacks based on intelligence.
+            </p>
+            <button class="full-width" id="scenarioButton" onclick="generateScenario()">Analyze Scenario</button>
+        </div>
+</div>
+
+<script>
+let sessionId = null;
+let analysisMode = "cti";
+let pdfUploaded = false;
+
+function setMode(mode) {
+    analysisMode = mode;
+    
+    const input = document.getElementById("question");
+    const alert = document.getElementById("redTeamAlert");
+    const options = document.querySelectorAll(".mode-option");
+
+    const headerTitle = document.getElementById("headerTitle");
+    const headerDesc = document.getElementById("headerDesc");
+    const statusBadge = document.getElementById("statusBadge");
+
+    const scenarioTitle = document.getElementById("scenarioTitle");
+    const scenarioDesc = document.getElementById("scenarioDescription");
+    const scenarioBtn = document.getElementById("scenarioButton");
+
+
+    // Get all buttons
+    const allButtons = document.querySelectorAll("button");
+
+    options.forEach(opt => opt.classList.remove("active"));
+    event.target.closest('.mode-option').classList.add("active");
+
+    if (mode === "cti") {
+        headerTitle.textContent = "Threat Intelligence Analysis";
+        headerDesc.textContent = "Analyze threat actors, campaigns, and indicators of compromise";
+        statusBadge.textContent = "CTI Mode Active";
+        statusBadge.className = "status-badge cti-mode";
+        
+        input.placeholder = "Ask about threat actors, TTPs, campaigns, or IOCs...";
+        alert.style.display = "none";
+
+        scenarioTitle.textContent = "Attack Scenario Analysis";
+        scenarioDesc.textContent = "Analyze how threat actors could execute attacks based on intelligence.";
+        scenarioBtn.textContent = "Analyze Scenario";
+
+
+
+        // Update all button colors for CTI mode
+        allButtons.forEach(btn => {
+            btn.classList.remove("redteam-mode");
+            btn.classList.add("cti-mode");
+        });
+    } else {
+        headerTitle.textContent = "Red Team Operations";
+        headerDesc.textContent = "Simulate adversary tactics and offensive security testing";
+        statusBadge.textContent = "Red Team Mode Active";
+        statusBadge.className = "status-badge redteam-mode";
+        
+        input.placeholder = "Ask about attack vectors, exploitation techniques, or operational planning...";
+        alert.style.display = "flex";
+
+        scenarioTitle.textContent = "Red Team Attack Scenario";
+        scenarioDesc.textContent = "Simulate an end-to-end adversary attack chain aligned to MITRE ATT&CK.";
+        scenarioBtn.textContent = "Generate Red Team Scenario";
+
+
+        // Update all button colors for Red Team mode
+        allButtons.forEach(btn => {
+            btn.classList.remove("cti-mode");
+            btn.classList.add("redteam-mode");
+        });
+    }
+}
+
+function uploadPDF() {
+    const file = document.getElementById("pdfFile").files[0];
+    if (!file) {
+        appendBot("⚠️ Please select a PDF first.", analysisMode);
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("pdf", file);
+
+    appendBot("⏳ Processing report...");
+
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            appendBot("❌ Error: " + data.error, analysisMode);
+            pdfUploaded = false;
+            sessionId = null;
+            return;
+        }
+        sessionId = data.session_id;
+        pdfUploaded = true;
+        console.log("✓ Session ID stored:", sessionId);
+        const techniqueCount = data.mitre_techniques ? data.mitre_techniques.length : 0;
+        appendBot(`✅ Report ingested successfully.\n📊 Detected ${techniqueCount} MITRE techniques`, analysisMode);
+    })
+    .catch(error => {
+        appendBot("❌ Failed to upload report: " + error.message, analysisMode);
+        console.error(error);
+        pdfUploaded = false;
+        sessionId = null;
+    });
+}
+
+async function askQuestion() {
+    if (!pdfUploaded || !sessionId) {
+        appendBot("⚠️ Upload a report before asking questions.", analysisMode);
+        return;
+    }
+
+    const q = document.getElementById("question").value.trim();
+    if (!q) return;
+
+    appendUser(q);
+    document.getElementById("question").value = "";
+    showTyping();
+
+    await callAI(q);
+}
+
+async function generateScenario() {
+    if (!pdfUploaded || !sessionId) {
+        appendBot("⚠️ Please upload a threat intelligence report first to generate contextual scenarios.", analysisMode);
+        return;
+    }
+
+    showTyping();
+    
+    if (analysisMode === "cti") {
+        await callAI("Analyze potential attack scenarios based on the threat intelligence report. Include initial access vectors, persistence mechanisms, and likely objectives from a defensive perspective.");
+    } else {
+        await callAI("Generate a realistic red team attack scenario based on the threat intelligence report, including initial access, persistence, lateral movement, privilege escalation, and objectives aligned to MITRE ATT&CK.");
+    }
+}
+
+
+
+async function callAI(prompt) {
+    try {
+        console.log("📡 Calling AI with:", { sessionId, mode: analysisMode === "redteam" ? "red" : "cti" });
+        
+        if (!sessionId) {
+            appendBot("❌ Error: No session ID. Please upload a report first.", analysisMode);
+            hideTyping();
+            return;
+        }
+
+        const response = await fetch("/ask", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                session_id: sessionId,
+                question: prompt,
+                mode: analysisMode === "redteam" ? "red" : "cti"
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Backend error");
+        }
+        
+        const data = await response.json();
+        hideTyping();
+        
+        if (data.error) {
+            appendBot("❌ Error: " + data.error, analysisMode);
+        } else if (data.answer) {
+            appendBot(data.answer, analysisMode);
+        } else {
+            appendBot("No response returned from AI.", analysisMode);
+        }
+    } catch (error) {
+        hideTyping();
+        appendBot(
+            "❌ Error: " + error.message,
+            analysisMode
+        );
+        console.error(error);
+    }
+}
+
+function showTyping() {
+    document.getElementById("typingIndicator").style.display = "block";
+}
+
+function hideTyping() {
+    document.getElementById("typingIndicator").style.display = "none";
+}
+
+function appendUser(text) {
+    const box = document.getElementById("chatBox");
+    const msg = document.createElement("div");
+    msg.className = "message user";
+    msg.innerHTML = `<div class="message-content">${escapeHtml(text)}</div>`;
+    box.appendChild(msg);
+    box.scrollTop = box.scrollHeight;
+}
+
+function appendBot(text, mode) {
+    const box = document.getElementById("chatBox");
+    const msg = document.createElement("div");
+    msg.className = `message bot ${mode || 'cti'}`;
+    
+    const label = mode === "redteam" ? "🔴 Red Team Analysis" : "🛡️ CTI Analysis";
+    
+    // Advanced formatting for better readability
+    let formattedText = text
+        // Preserve existing structure while adding better formatting
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>')
+        // Bold text: **text** -> <strong>text</strong>
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        // Italic: *text* -> <em>text</em>
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        // Section headers: # Header
+        .replace(/^# ([^\n]+)/gm, '<div style="font-size:16px;font-weight:700;margin:16px 0 8px 0;color:#1f2937;">$1</div>')
+        // Sub-headers: ## Subheader
+        .replace(/^## ([^\n]+)/gm, '<div style="font-size:14px;font-weight:600;margin:12px 0 6px 0;color:#374151;">$1</div>')
+        // Numbered lists: 1. Item -> styled list
+        .replace(/^(\d+)\.\s+([^\n]+)/gm, '<div style="margin:8px 0 8px 0;padding-left:24px;"><span style="display:inline-block;width:24px;margin-left:-24px;font-weight:600;color:#2563eb;">$1.</span> $2</div>')
+        // Bullet points: - Item or * Item
+        .replace(/^\s*[-•]\s+([^\n]+)/gm, '<div style="margin:8px 0 8px 0;padding-left:24px;"><span style="color:#6b7280;margin-left:-16px;margin-right:8px;">•</span>$1</div>')
+        // MITRE Techniques: T#### format
+        .replace(/(T\d{4})/g, '<code style="background:#dbeafe;color:#1e40af;padding:3px 8px;border-radius:4px;font-weight:600;font-size:12px;">$1</code>')
+        // Tactics: TA#### format
+        .replace(/(TA\d{4})/g, '<code style="background:#fef3c7;color:#b45309;padding:3px 8px;border-radius:4px;font-weight:600;font-size:12px;">$1</code>')
+        // Code blocks: `code`
+        .replace(/`([^`]+)`/g, '<code style="background:#f3f4f6;color:#dc2626;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;">$1</code>')
+        // Key value pairs: Key: value
+        .replace(/([A-Z][A-Za-z\s]+):\s+([^\n<]+)/g, '<div style="margin:6px 0;"><strong style="color:#1f2937;">$1:</strong> <span style="color:#4b5563;">$2</span></div>')
+        // High importance markers
+        .replace(/CRITICAL|CRITICAL:/gi, '<span style="background:#fecaca;color:#7f1d1d;padding:2px 6px;border-radius:4px;font-weight:700;">CRITICAL</span>')
+        .replace(/WARNING|WARNING:/gi, '<span style="background:#fed7aa;color:#92400e;padding:2px 6px;border-radius:4px;font-weight:700;">WARNING</span>')
+        .replace(/NOTE|NOTE:/gi, '<span style="background:#dbeafe;color:#0c4a6e;padding:2px 6px;border-radius:4px;font-weight:700;">NOTE</span>');
+    
+    msg.innerHTML = `
+        <div class="message-content">
+            <div class="message-label">${label}</div>
+            <div style="line-height:1.8;word-wrap:break-word;">${formattedText}</div>
+        </div>
+    `;
+    box.appendChild(msg);
+    box.scrollTop = box.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>
+
+</body>
+</html>

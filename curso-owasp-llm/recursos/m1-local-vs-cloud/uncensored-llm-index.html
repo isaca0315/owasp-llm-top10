@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSec AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tiempos+Headline:wght@400;600&family=Lyon+Text:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    :root {
+        --claude-bg: #f5f5f0;
+        --claude-surface: #ffffff;
+        --claude-text: #2e2c28;
+        --claude-text-secondary: #73726e;
+        --claude-border: #ddddd8;
+        --claude-accent: #cc785c;
+        --claude-accent-hover: #b86a50;
+        --claude-input-bg: #fafaf8;
+    }
+    
+    body {
+        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        background: var(--claude-bg);
+        color: var(--claude-text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .app-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    /* Header */
+    .header {
+        background: var(--claude-surface);
+        border-bottom: 1px solid var(--claude-border);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+    
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .logo {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #cc785c 0%, #d98e72 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+    
+    .app-title {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--claude-text);
+        letter-spacing: -0.01em;
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .header-btn {
+        padding: 6px 12px;
+        background: transparent;
+        border: 1px solid var(--claude-border);
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--claude-text-secondary);
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    
+    .header-btn:hover {
+        background: var(--claude-input-bg);
+        border-color: var(--claude-text-secondary);
+    }
+    
+    /* Chat area */
+    .chat-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 20px 20px;
+        scroll-behavior: smooth;
+    }
+    
+    .chat-wrapper {
+        max-width: 768px;
+        margin: 0 auto;
+        padding-top: 40px;
+    }
+    
+    .welcome-section {
+        text-align: left;
+        margin-bottom: 48px;
+        animation: fadeIn 0.6s ease;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .welcome-title {
+        font-size: 32px;
+        font-weight: 400;
+        color: var(--claude-text);
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+    
+    .welcome-subtitle {
+        font-size: 16px;
+        color: var(--claude-text-secondary);
+        line-height: 1.5;
+    }
+    
+    /* Messages */
+    .message {
+        margin-bottom: 32px;
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .message-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .message-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .user-avatar {
+        background: #e5e5e0;
+    }
+    
+    .assistant-avatar {
+        background: linear-gradient(135deg, #cc785c 0%, #d98e72 100%);
+    }
+    
+    .message-role {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--claude-text-secondary);
+    }
+    
+    .message-content {
+        margin-left: 38px;
+        font-size: 15px;
+        line-height: 1.65;
+        color: var(--claude-text);
+    }
+    
+    .user-message .message-content {
+        color: var(--claude-text-secondary);
+    }
+    
+    /* Code blocks */
+    .code-block {
+        background: var(--claude-surface);
+        border: 1px solid var(--claude-border);
+        border-radius: 8px;
+        margin: 16px 0;
+        overflow: hidden;
+    }
+    
+    .code-header {
+        padding: 8px 14px;
+        background: var(--claude-input-bg);
+        border-bottom: 1px solid var(--claude-border);
+        font-size: 12px;
+        color: var(--claude-text-secondary);
+        font-weight: 500;
+    }
+    
+    .code-content {
+        padding: 16px;
+        overflow-x: auto;
+    }
+    
+    .code-content code {
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--claude-text);
+    }
+    
+    /* Note blocks */
+    .note-block {
+        background: #fef6ee;
+        border-left: 3px solid var(--claude-accent);
+        padding: 14px 16px;
+        border-radius: 4px;
+        margin: 16px 0;
+        font-size: 14px;
+        color: #6b5841;
+    }
+    
+    .note-block strong {
+        color: #5a482f;
+    }
+    
+    /* Input area */
+    .input-container {
+        background: var(--claude-surface);
+        border-top: 1px solid var(--claude-border);
+        padding: 16px 20px 20px;
+        flex-shrink: 0;
+    }
+    
+    .input-wrapper {
+        max-width: 768px;
+        margin: 0 auto;
+        position: relative;
+    }
+    
+    .input-box {
+        background: var(--claude-input-bg);
+        border: 1px solid var(--claude-border);
+        border-radius: 12px;
+        padding: 14px 52px 14px 16px;
+        width: 100%;
+        font-size: 15px;
+        font-family: inherit;
+        color: var(--claude-text);
+        resize: none;
+        height: auto;
+        min-height: 52px;
+        max-height: 200px;
+        overflow-y: auto;
+        transition: all 0.15s ease;
+        line-height: 1.5;
+    }
+    
+    .input-box:focus {
+        outline: none;
+        border-color: var(--claude-text-secondary);
+        background: var(--claude-surface);
+    }
+    
+    .input-box::placeholder {
+        color: #a8a7a3;
+    }
+    
+    .send-button {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        width: 36px;
+        height: 36px;
+        background: var(--claude-accent);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+        color: white;
+    }
+    
+    .send-button:hover:not(:disabled) {
+        background: var(--claude-accent-hover);
+        transform: scale(1.05);
+    }
+    
+    .send-button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    
+    .send-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Loading indicator */
+    .typing-indicator {
+        margin-left: 38px;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        height: 24px;
+    }
+    
+    .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--claude-text-secondary);
+        border-radius: 50%;
+        opacity: 0.4;
+        animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+        0%, 60%, 100% {
+            opacity: 0.4;
+            transform: translateY(0);
+        }
+        30% {
+            opacity: 1;
+            transform: translateY(-4px);
+        }
+    }
+    
+    .input-hint {
+        text-align: center;
+        font-size: 12px;
+        color: var(--claude-text-secondary);
+        margin-top: 10px;
+    }
+    
+    /* Scrollbar */
+    .chat-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .chat-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .chat-container::-webkit-scrollbar-thumb {
+        background: var(--claude-border);
+        border-radius: 4px;
+    }
+    
+    .chat-container::-webkit-scrollbar-thumb:hover {
+        background: #c8c8c0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header {
+            padding: 12px 16px;
+        }
+        
+        .chat-container {
+            padding: 0 16px 16px;
+        }
+        
+        .chat-wrapper {
+            padding-top: 24px;
+        }
+        
+        .welcome-title {
+            font-size: 26px;
+        }
+        
+        .welcome-section {
+            margin-bottom: 32px;
+        }
+        
+        .input-container {
+            padding: 12px 16px 16px;
+        }
+        
+        .header-actions {
+            display: none;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="app-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">🔐</div>
+            <div class="app-title">CyberSec Assistant</div>
+        </div>
+        <div class="header-actions">
+            <button class="header-btn" onclick="clearChat()">New chat</button>
+        </div>
+    </div>
+    
+    <!-- Chat area -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-wrapper">
+            <div class="welcome-section" id="welcomeSection">
+                <h1 class="welcome-title">How can I help with cybersecurity today?</h1>
+                <p class="welcome-subtitle">Ask me about threat analysis, security best practices, vulnerability assessment, or any security-related questions.</p>
+            </div>
+            
+            <div id="messagesContainer"></div>
+        </div>
+    </div>
+    
+    <!-- Input area -->
+    <div class="input-container">
+        <div class="input-wrapper">
+            <textarea 
+                id="userInput" 
+                class="input-box" 
+                placeholder="Ask about cybersecurity..."
+                rows="1"
+                onkeydown="handleKeyDown(event)"
+                oninput="adjustHeight(this)"
+            ></textarea>
+            <button class="send-button" id="sendButton" onclick="sendMessage()">
+                <svg class="send-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+        <div class="input-hint">Press ⌘ + Enter to send</div>
+    </div>
+</div>
+
+<script>
+let isProcessing = false;
+
+function adjustHeight(element) {
+    element.style.height = 'auto';
+    element.style.height = Math.min(element.scrollHeight, 200) + 'px';
+}
+
+function handleKeyDown(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+function addMessage(role, content) {
+    const messagesContainer = document.getElementById('messagesContainer');
+    const welcomeSection = document.getElementById('welcomeSection');
+    
+    // Hide welcome section after first message
+    if (welcomeSection && role === 'user') {
+        welcomeSection.style.display = 'none';
+    }
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}-message`;
+    
+    const avatar = role === 'user' ? '👤' : '🔐';
+    const roleName = role === 'user' ? 'You' : 'Assistant';
+    
+    messageDiv.innerHTML = `
+        <div class="message-header">
+            <div class="message-avatar ${role}-avatar">${avatar}</div>
+            <div class="message-role">${roleName}</div>
+        </div>
+        <div class="message-content" id="${role}-content-${Date.now()}">
+            ${role === 'assistant' ? '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>' : content}
+        </div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    scrollToBottom();
+    
+    return messageDiv;
+}
+
+function scrollToBottom() {
+    const chatContainer = document.getElementById('chatContainer');
+    setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 100);
+}
+
+function formatResponse(text) {
+    // Check if response contains code (backticks)
+    const codePattern = /`([^`]+)`/g;
+    const hasCode = codePattern.test(text);
+    
+    if (hasCode) {
+        let formatted = text;
+        
+        // Replace code blocks with formatted HTML
+        formatted = formatted.replace(/`([^`]+)`/g, function(match, code) {
+            return `<div class="code-block"><div class="code-header">Code</div><div class="code-content"><code>${escapeHtml(code)}</code></div></div>`;
+        });
+        
+        // Replace "Replace" instructions with note boxes
+        formatted = formatted.replace(/(Replace .+?)(?=<|$)/g, function(match) {
+            return `<div class="note-block"><strong>Note:</strong> ${escapeHtml(match)}</div>`;
+        });
+        
+        return formatted;
+    } else {
+        return escapeHtml(text);
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+async function sendMessage() {
+    if (isProcessing) return;
+    
+    const input = document.getElementById('userInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    isProcessing = true;
+    const sendButton = document.getElementById('sendButton');
+    sendButton.disabled = true;
+    
+    // Add user message
+    addMessage('user', escapeHtml(message));
+    
+    // Clear input
+    input.value = '';
+    input.style.height = 'auto';
+    
+    // Add assistant message with typing indicator
+    const assistantMessage = addMessage('assistant', '');
+    const contentId = assistantMessage.querySelector('.message-content').id;
+    
+    try {
+        const response = await fetch('/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: message })
+        });
+        
+        const data = await response.json();
+        
+        // Replace typing indicator with actual response
+        const contentElement = document.getElementById(contentId);
+        if (contentElement) {
+            contentElement.innerHTML = formatResponse(data.response);
+        }
+        
+        scrollToBottom();
+    } catch (error) {
+        console.error('Error:', error);
+        const contentElement = document.getElementById(contentId);
+        if (contentElement) {
+            contentElement.innerHTML = '<span style="color: #cc785c;">Sorry, I encountered an error. Please try again.</span>';
+        }
+    } finally {
+        isProcessing = false;
+        sendButton.disabled = false;
+        input.focus();
+    }
+}
+
+function clearChat() {
+    const messagesContainer = document.getElementById('messagesContainer');
+    const welcomeSection = document.getElementById('welcomeSection');
+    
+    messagesContainer.innerHTML = '';
+    if (welcomeSection) {
+        welcomeSection.style.display = 'block';
+    }
+    
+    document.getElementById('userInput').value = '';
+    document.getElementById('userInput').style.height = 'auto';
+}
+
+// Focus input on load
+window.addEventListener('load', () => {
+    document.getElementById('userInput').focus();
+});
+</script>
+</body>
+</html>
