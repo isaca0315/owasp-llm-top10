@@ -8,6 +8,9 @@
 #   docker compose up --build -d            # todos los retos
 #   docker compose up --build -d llm03      # solo el reto LLM03
 #
+# Los puertos se publican en 127.0.0.1 (solo localhost): el CTF NO queda
+# accesible desde la LAN. Sigue usando http://localhost:600X en el navegador.
+#
 # Las API keys opcionales (Gemini/Groq) se cargan desde .env si existe; si no,
 # todo funciona en modo simulado (100% offline, costo $0).
 # ============================================================================
@@ -30,58 +33,58 @@ services:
     <<: *ctf-common
     container_name: promptme-ctf-llm01
     command: python services/llm01-prompt-injection/app.py
-    ports: ["6001:6000"]
+    ports: ["127.0.0.1:6001:6000"]
 
   llm02:
     <<: *ctf-common
     container_name: promptme-ctf-llm02
     command: python services/llm02-sensitive-info/app.py
-    ports: ["6002:6000"]
+    ports: ["127.0.0.1:6002:6000"]
 
   llm03:
     <<: *ctf-common
     container_name: promptme-ctf-llm03
     command: python services/llm03-supply-chain/app.py
-    ports: ["6003:6000"]
+    ports: ["127.0.0.1:6003:6000"]
 
   llm04:
     <<: *ctf-common
     container_name: promptme-ctf-llm04
     command: python services/llm04-data-poisoning/app.py
-    ports: ["6004:6000"]
+    ports: ["127.0.0.1:6004:6000"]
 
   llm05:
     <<: *ctf-common
     container_name: promptme-ctf-llm05
     command: python services/llm05-output-handling/app.py
-    ports: ["6005:6000"]
+    ports: ["127.0.0.1:6005:6000"]
 
   llm06:
     <<: *ctf-common
     container_name: promptme-ctf-llm06
     command: python services/llm06-excessive-agency/app.py
-    ports: ["6006:6000"]
+    ports: ["127.0.0.1:6006:6000"]
 
   llm07:
     <<: *ctf-common
     container_name: promptme-ctf-llm07
     command: python services/llm07-prompt-leakage/app.py
-    ports: ["6007:6000"]
+    ports: ["127.0.0.1:6007:6000"]
 
   llm08:
     <<: *ctf-common
     container_name: promptme-ctf-llm08
     command: python services/llm08-vector-weakness/app.py
-    ports: ["6008:6000"]
+    ports: ["127.0.0.1:6008:6000"]
 
   llm09:
     <<: *ctf-common
     container_name: promptme-ctf-llm09
     command: python services/llm09-misinformation/app.py
-    ports: ["6009:6000"]
+    ports: ["127.0.0.1:6009:6000"]
 
   llm10:
     <<: *ctf-common
     container_name: promptme-ctf-llm10
     command: python services/llm10-unbounded-consumption/app.py
-    ports: ["6010:6000"]
+    ports: ["127.0.0.1:6010:6000"]
