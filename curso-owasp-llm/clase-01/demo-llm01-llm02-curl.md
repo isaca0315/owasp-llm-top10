@@ -2,6 +2,8 @@
 
 **Objetivo:** Mostrar cómo hacer el recon **directo**: por `curl` (método reproducible) y por **chat/UI** (lo que ve el alumno).
 
+**Fuente:** [AIGoat](https://github.com/AISecurityConsortium/AIGoat) — LLM01 (Prompt Injection) / LLM02 (Sensitive Info Disclosure)
+
 **Labs:** llm01 (5001) | llm02 (5002)
 
 ## 1) Levantar solo estos dos
