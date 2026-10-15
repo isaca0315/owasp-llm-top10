@@ -257,14 +257,16 @@ Fases clásicas donde la IA acelera al atacante:
 ## 🧰 Checklist de recon (chuleta)
 
 ```bash
-BASE=http://localhost:5001
+BASE=http://localhost:5001          # (lab LLM01 de ejemplo; usa tu puerto 500X)
 
 curl -s "$BASE/" | head              # UI / pistas de producto
-curl -s "$BASE/metrics"              # límites / estado
-curl -s "$BASE/tools"                # herramientas expuestas
 curl -s "$BASE/paginas"              # contenido que el bot "lee"
+curl -s -X POST "$BASE/chat" \       # endpoint principal (JSON)
+  -H 'Content-Type: application/json' -d '{"message":"hola"}'
 
 # Y SIEMPRE: DevTools → Network mientras usas la UI.
+# Cada lab tiene endpoints distintos (/agent /tools /query /train /metrics …):
+# enuméralos desde la UI y desde el código fuente de tu lab.
 ```
 
 > El recon **ya te dice** el modelo de amenaza: ¿chat? ¿agente? ¿RAG? ¿pipeline?

@@ -11,6 +11,7 @@ siguiendo el **OWASP Top 10 para LLM (2025)**, con enfoque **red team**.
 2. **Clasificar** cada fallo con **OWASP LLM (2025)** y **MITRE ATLAS**.
 3. **Explotar** los 10 vectores principales.
 4. **Documentar** un hallazgo (reproducción, impacto, remediación, detección).
+5. **Proponer** el control defensivo concreto que habría detenido cada ataque.
 
 ---
 
@@ -97,6 +98,7 @@ Plataforma: <https://infinity.cyberwarfare.live/> (crea una **cuenta gratis**).
 | Act. 3 | 40 |
 | Bonus (participación/demos) | +10 |
 
+**Total base: 100 pts** (el bonus nunca resta).
 Se valora: **reproducción**, **causa raíz**, **impacto**, **remediación** y **detección**.
 Copia de payloads sin entenderlos → nota baja.
 

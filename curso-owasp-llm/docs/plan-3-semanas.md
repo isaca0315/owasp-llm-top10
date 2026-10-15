@@ -6,29 +6,8 @@
 **Refuerzo externo**: retos gratis de Infinity Learning (CWL).
 **Excluido**: Active Directory / BloodHound.
 
----
-
-## 🎯 Objetivos generales
-
-Al terminar el módulo, el estudiante será capaz de:
-1. **Enumerar** la superficie de ataque de una aplicación con IA (chat, RAG, agentes, pipelines).
-2. **Clasificar** cada vulnerabilidad con **OWASP LLM Top 10 (2025)** y **MITRE ATLAS**.
-3. **Explotar** los 10 vectores principales con payloads propios y variados.
-4. **Documentar** un hallazgo red team (reproducción, impacto, remediación y detección).
-5. **Proponer** el control defensivo concreto para cada ataque.
-
----
-
-## 🧩 Mapa de sesiones
-
-| Sem. | Sesión | Duración | Tema | Categorías |
-|:---:|:---:|:---:|---|---|
-| 1 | S1 | 2 h | Fundamentos + superficie + método | (intro) |
-| 1 | S2 | 3 h | Atacar el modelo | LLM01 · LLM07 |
-| 2 | S3 | 2 h | Fuga de información | LLM02 · LLM08 |
-| 2 | S4 | 3 h | Agencia y salida (puente MCP) | LLM06 · LLM05 |
-| 3 | S5 | 2 h | Cadena de suministro y datos | LLM03 · LLM04 |
-| 3 | S6 | 3 h | Consumo, desinformación y cierre | LLM09 · LLM10 |
+> 📄 **Objetivos, programa, actividades, entregas y normas** → `guia-alumno.md`
+> (fuente única). Aquí solo el **contenido detallado de cada sesión**.
 
 ---
 
@@ -73,15 +52,8 @@ Al terminar el módulo, el estudiante será capaz de:
 
 ## 🧪 Evaluación
 
-**3 actividades, una por semana** — cada una se resuelve en **Infinity Learning** y su
-entregable combina el trabajo en la plataforma **+ componentes de análisis**
-(plantillas en `../actividades/`):
+**3 actividades** (una por semana, en Infinity Learning) → retos, entregable y puntos
+en `guia-alumno.md` (§4 y §8); plantillas en `../actividades/`.
 
-| Actividad | Semana | Retos Infinity | Entregable | Puntos |
-|:---:|:---:|---|---|:---:|
-| **Act. 1** | Semana 1 | LLM01 · Vault Breach · Skill Issue | Writeups + análisis | 30 |
-| **Act. 2** | Semana 2 | LLM02 · LLM08 · One Get Away · Who Needs Permission? · Remember ME! | Writeups + análisis + coevaluación | 30 |
-| **Act. 3** | Semana 3 | LLM03/05 · Poisoned Cure · Unlocked | Writeups + mapa integrador + presentación | 40 |
-
-Cada entregable = **dossier**: (A) evidencia Infinity + writeups, (B) análisis/reflexión,
-(C) mapa OWASP↔ATLAS. **Total base: 100 pts.**
+> Un reto completado **sin writeup no puntúa**: lo que se evalúa es el dossier
+> (evidencia + análisis + mapa OWASP↔ATLAS).

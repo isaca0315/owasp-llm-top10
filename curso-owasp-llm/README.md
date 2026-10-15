@@ -17,9 +17,9 @@ curso-owasp-llm/
 ├── README.md                       ← este archivo (índice)
 ├── docs/
 │   ├── guia-alumno.md              ← ⭐ empieza aquí: programa, entregas y normas
-│   └── plan-3-semanas.md           ← plan detallado: objetivos, sesiones y evaluación
+│   └── plan-3-semanas.md           ← detalle de las 6 sesiones (qué ver en cada una)
 ├── actividades/                    ← ⭐ plantillas rellenables de las 3 actividades
-│   ├── README.md                   ← calendario y normas de entrega
+│   ├── README.md                   ← índice de plantillas
 │   ├── entregable-actividad-1.md   ← plantilla (Semana 1)
 │   ├── entregable-actividad-2.md   ← plantilla (Semana 2)
 │   ├── entregable-actividad-3.md   ← plantilla (Semana 3)

@@ -1,17 +1,10 @@
-# 📥 Actividades y entregables
+# 📥 Plantillas de actividades
 
-Índice de las **3 actividades** del curso (una por semana). Cada actividad se resuelve en
-**Infinity Learning** y su entregable es un **dossier** (evidencia + análisis + síntesis).
+Índice de las **plantillas rellenables** de las 3 actividades (una por semana).
 
----
-
-## Calendario de entregas
-
-| Actividad | Semana | Retos Infinity | Extras | Puntos | Entrega |
-|:---:|:---:|---|---|:---:|---|
-| **1** | 1 | LLM01 · Vault Breach · Skill Issue | B1–B4 | 30 | Fin de Semana 1 |
-| **2** | 2 | LLM02 · LLM08 · One Get Away · Who Needs Permission? · Remember ME! | B1–B5 | 30 | Fin de Semana 2 |
-| **3** | 3 | LLM03/05 · Poisoned Cure · Unlocked | B1–B4 + B6 | 40 | Fin de Semana 3 |
+> 📄 **Calendario de entregas, retos de Infinity Learning, componentes de análisis
+> y puntos** → `../docs/guia-alumno.md` (§4, §5 y §8). Este índice solo lista las
+> plantillas.
 
 ---
 
@@ -19,33 +12,16 @@
 
 | Fichero | Uso |
 |---|---|
-| `entregable-actividad-1.md` | Plantilla rellenable — Actividad 1 |
-| `entregable-actividad-2.md` | Plantilla rellenable — Actividad 2 |
-| `entregable-actividad-3.md` | Plantilla rellenable — Actividad 3 |
+| `entregable-actividad-1.md` | Plantilla rellenable — Actividad 1 (Semana 1) |
+| `entregable-actividad-2.md` | Plantilla rellenable — Actividad 2 (Semana 2) |
+| `entregable-actividad-3.md` | Plantilla rellenable — Actividad 3 (Semana 3) |
 | `plantilla-writeup.md` | Plantilla de writeup (1 por reto) |
-| `plantilla-coevaluacion.md` | Plantilla de coevaluación (Act. 2) |
+| `plantilla-coevaluacion.md` | Plantilla de coevaluación entre pares (solo Act. 2) |
 
 ---
 
 ## Cómo se entrega
 
-1. Copia la plantilla de la actividad (`entregable-actividad-N.md`).
-2. Complétala (Partes **A**, **B**, **C**).
-3. Expórtala a **PDF**: `apellidos_nombre_actividad-N.pdf`.
-4. Súbela al aula virtual **antes del final de la semana**.
-
-> Un reto completado **sin writeup no puntúa**. Lo que se evalúa es el **dossier**.
-
----
-
-## Componentes de análisis (Parte B)
-
-- **B1 🪞 Autoevaluación** (todas)
-- **B2 🔁 Variante propia** del payload (todas)
-- **B3 🛡️ Control defensivo + detección** (todas)
-- **B4 ⚖️ Crítica del reto** (todas)
-- **B5 🤝 Coevaluación** (solo Act. 2)
-- **B6 🗺️ Mapa integrador + presentación 5 min** (solo Act. 3)
-
-Detalle de cada componente: ver la plantilla de la actividad correspondiente
-(`entregable-actividad-N.md`).
+Copia la plantilla de la actividad, complétala (Partes **A**, **B**, **C**),
+expórtala a **PDF** (`apellidos_nombre_actividad-N.pdf`) y súbela al aula virtual
+antes del final de la semana. Detalle completo en `../docs/guia-alumno.md` (§5).

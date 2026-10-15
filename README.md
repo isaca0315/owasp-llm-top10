@@ -1,8 +1,9 @@
 # 🐙 OWASP LLM Top 10 — Laboratorios de seguridad para LLMs
 
-Repositorio con **dos proyectos educativos** que cubren el
+Repositorio con **material educativo** que cubre el
 [OWASP Top 10 para Aplicaciones LLM (2025)](https://genai.owasp.org/llm-top-10/),
-desde el enfoque de **aprendizaje guiado (CTF)** y de **Red Team (explotación real)**.
+desde el enfoque de **aprendizaje guiado (CTF)** y de **Red Team (explotación real)**,
+con el **material del curso** (Ciberseguridad 5) incluido.
 
 > ⚠️ **Aviso legal**: todos los servicios son deliberadamente vulnerables.
 > Úsalos solo en entornos aislados y con fines educativos.
@@ -38,6 +39,13 @@ cd owasp-llm-redteam-labs
 docker compose up --build -d                       # todos los labs
 PYTHON=.venv/bin/python bash tools/run_all.sh      # smoke test 10/10
 ```
+
+### 3. `curso-owasp-llm/` — Material del curso (Ciberseguridad 5)
+**3 semanas / 6 sesiones / 15 h**. Programa, entregables y normas en
+`curso-owasp-llm/docs/guia-alumno.md` (⭐ empieza aquí); material de la Clase 1
+(diapositivas, handout OWASP↔ATLAS, hoja de trabajo y ticket de salida) en
+`curso-owasp-llm/clase-01/`; plantillas de las 3 actividades semanales en
+`curso-owasp-llm/actividades/`. Ver `curso-owasp-llm/README.md` para el índice completo.
 
 ---
 
